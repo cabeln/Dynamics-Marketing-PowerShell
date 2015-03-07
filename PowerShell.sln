@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerShell.API", "PowerShell.API\PowerShell.API.csproj", "{976C48A3-639C-4216-BA4D-C5F925D7A2FE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PowerShell.OData", "PowerShell.OData\PowerShell.OData.csproj", "{26B27E76-65AE-4B8E-AE79-2FEFADFC452B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Installer", "Installer", "{557D4436-E8B8-44CC-AEB2-B2D23D3276AF}"
+	ProjectSection(SolutionItems) = preProject
+		Installer\Microsoft Dynamics Marketing - PowerShell(32bit).wxs = Installer\Microsoft Dynamics Marketing - PowerShell(32bit).wxs
+		Installer\Microsoft Dynamics Marketing - PowerShell(64bit).wxs = Installer\Microsoft Dynamics Marketing - PowerShell(64bit).wxs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestScripts", "TestScripts", "{C6161E13-7EE7-4B19-B7AC-54A79BD310E2}"
+	ProjectSection(SolutionItems) = preProject
+		TestScipts\ConnectionTest.psm1 = TestScipts\ConnectionTest.psm1
+		TestScipts\ContactPermissions.psm1 = TestScipts\ContactPermissions.psm1
+		TestScipts\ContactsTest.psm1 = TestScipts\ContactsTest.psm1
+		TestScipts\LeadsTest.psm1 = TestScipts\LeadsTest.psm1
+		TestScipts\MDMOne-UpdateContacts.psm1 = TestScipts\MDMOne-UpdateContacts.psm1
+		TestScipts\TestScripts.psm1 = TestScipts\TestScripts.psm1
+	EndProjectSection
+	ProjectSection(FolderStartupServices) = postProject
+		{82A7F48D-3B50-4B1E-B82E-3ADA8210C358} = {82A7F48D-3B50-4B1E-B82E-3ADA8210C358}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{976C48A3-639C-4216-BA4D-C5F925D7A2FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{976C48A3-639C-4216-BA4D-C5F925D7A2FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{976C48A3-639C-4216-BA4D-C5F925D7A2FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{976C48A3-639C-4216-BA4D-C5F925D7A2FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26B27E76-65AE-4B8E-AE79-2FEFADFC452B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26B27E76-65AE-4B8E-AE79-2FEFADFC452B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26B27E76-65AE-4B8E-AE79-2FEFADFC452B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26B27E76-65AE-4B8E-AE79-2FEFADFC452B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

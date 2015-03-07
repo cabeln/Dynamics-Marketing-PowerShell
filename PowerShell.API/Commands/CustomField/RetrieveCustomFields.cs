@@ -1,0 +1,81 @@
+﻿//--------------------------------------------------------------------------
+//  <copyright file="RetrieveCustomFields.cs" company="Microsoft">
+//      Copyright (c) 2015 Microsoft Corporation.
+//
+//      Permission is hereby granted, free of charge, to any person obtaining a copy
+//      of this software and associated documentation files (the "Software"), to deal
+//      in the Software without restriction, including without limitation the rights
+//      to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//      copies of the Software, and to permit persons to whom the Software is
+//      furnished to do so, subject to the following conditions:
+//
+//      The above copyright notice and this permission notice shall be included in
+//
+//      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//      IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//      FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//      AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//      LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//      OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//      THE SOFTWARE.
+//  </copyright>
+//--------------------------------------------------------------------------
+
+namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.CustomField
+{
+    using System;
+    using System.Management.Automation;
+    using SDK.Messages.CustomField;
+
+    /// <summary>
+    /// Command to setup the Azure namespace and authentication used by all other commands.
+    /// </summary>
+    [Cmdlet(VerbsCommon.Get, "MDMCustomFields")]
+    public class RetrieveCustomFields : TypedCmdlet<RetrieveCustomFieldsRequest, RetrieveCustomFieldsResponse>
+    {
+        /// <summary>
+        /// Gets or sets the Id of the belongs to company id.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Alias("BelongsTo")]
+        public Guid? BelongsToCompanyId
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Gets or sets the Id of the belongs to company id.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Alias("Entity")]
+        public string EntityTypeName
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// ProcessRecord method.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            var request = this.NewRequest();
+            request.BelongsToCompanyId = this.BelongsToCompanyId;
+            request.EntityTypeName = this.EntityTypeName;
+
+            var response = this.ProcessRequest(request);
+            if (response == null)
+            {
+                return;
+            }
+
+            if (!response.Succeeded)
+            {
+                this.WriteVerbose("Command has failed:" + response.Message);
+            }
+
+            this.WriteObject(response.CustomFields);
+        }
+    }
+}

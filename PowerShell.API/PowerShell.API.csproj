@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(EnvironmentConfig)" Condition="Exists('$(EnvironmentConfig)')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{976C48A3-639C-4216-BA4D-C5F925D7A2FE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Microsoft.Dynamics.Marketing.Powershell.API</RootNamespace>
+    <AssemblyName>Microsoft.Dynamics.Marketing.Powershell.API</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>MDMPowerShellStrongName.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Dynamics.Marketing.SDK, Version=17.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Dynamics.Marketing.SDK.library.17.0.3709.2\lib\net40\Microsoft.Dynamics.Marketing.SDK.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.ServiceBus, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\WindowsAzure.ServiceBus.2.1.0.0\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.2.0.0.0\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Management.Automation">
+      <Private>True</Private>
+      <HintPath>$(PkgPowershell_Corext)\System.Management.Automation.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\DisconnectApi.cs" />
+    <Compile Include="Commands\Contact\CreateOrUpdateContacts.cs" />
+    <Compile Include="Commands\Contact\RetrieveSalutations.cs" />
+    <Compile Include="Commands\Contact\RetrieveLanguages.cs" />
+    <Compile Include="Commands\CustomField\CreateOrUpdateCustomFieldCategories.cs" />
+    <Compile Include="Commands\Company\CreateOrUpdateCompany.cs" />
+    <Compile Include="Commands\Company\RetrieveCompany.cs" />
+    <Compile Include="Commands\Contact\DeleteContact.cs" />
+    <Compile Include="Commands\Contact\RetrieveContacts.cs" />
+    <Compile Include="Commands\Company\RetrieveCompanies.cs" />
+    <Compile Include="Commands\Contact\CreateOrUpdateContact.cs" />
+    <Compile Include="Commands\Company\DeleteCompany.cs" />
+    <Compile Include="Commands\Contact\RetrieveContact.cs" />
+    <Compile Include="Commands\CustomField\RetrieveCustomFields.cs" />
+    <Compile Include="Commands\EmailMessage\SetEmailHardbouncesToProcessed.cs" />
+    <Compile Include="Commands\EmailMessage\SetContactsPermissions.cs" />
+    <Compile Include="Commands\EmailMessage\SetContactPermissions.cs" />
+    <Compile Include="Commands\EmailMessage\SendEmailMessage.cs" />
+    <Compile Include="Commands\EmailMessage\RetrieveUnprocessedEmailHardBounces.cs" />
+    <Compile Include="Commands\EmailMessage\RetrieveMissingContactPermissions.cs" />
+    <Compile Include="Commands\EmailMessage\RetrieveEmailMessages.cs" />
+    <Compile Include="Commands\EmailMessage\RetrieveSchemaForEmailMessage.cs" />
+    <Compile Include="Commands\EmailMessage\RetrieveEmailMessageSentStatus.cs" />
+    <Compile Include="Commands\EmailMessage\RetrieveContactPermissions.cs" />
+    <Compile Include="Commands\Event\CancelEventAttendance.cs" />
+    <Compile Include="Commands\Event\CancelEventRegistration.cs" />
+    <Compile Include="Commands\Event\CreateOrUpdateEventAttendance.cs" />
+    <Compile Include="Commands\Event\CreateOrUpdateEventRegistration.cs" />
+    <Compile Include="Commands\Event\RetrieveEventAttendanceStatuses.cs" />
+    <Compile Include="Commands\Event\RetrieveEventAttendance.cs" />
+    <Compile Include="Commands\Event\RetrieveEventRegistration.cs" />
+    <Compile Include="Commands\ExternalEntity\CreateOrUpdateExternalEntity.cs" />
+    <Compile Include="Commands\ExternalEntity\RetrieveExternalIds.cs" />
+    <Compile Include="Commands\ExternalEntity\RetrieveExternalEntityTypes.cs" />
+    <Compile Include="Commands\ExternalEntity\RetrieveExternalEntity.cs" />
+    <Compile Include="Commands\ExternalEntity\DeleteExternalEntityType.cs" />
+    <Compile Include="Commands\ExternalEntity\DeleteExternalEntity.cs" />
+    <Compile Include="Commands\Lead\CreateOrUpdateLead.cs" />
+    <Compile Include="Commands\Lead\DeleteLead.cs" />
+    <Compile Include="Commands\Lead\RetrieveLead.cs" />
+    <Compile Include="Commands\Contact\RetrieveCurrencies.cs" />
+    <Compile Include="Commands\Lead\RetrieveTerritories.cs" />
+    <Compile Include="Commands\Lead\RetrieveSalesRatings.cs" />
+    <Compile Include="Commands\Lead\RetrieveLeadPriorities.cs" />
+    <Compile Include="Commands\Lead\RetrieveLeadStatuses.cs" />
+    <Compile Include="Commands\Lead\RetrieveLeads.cs" />
+    <Compile Include="Commands\MarketingList\CreateMarketingList.cs" />
+    <Compile Include="Commands\MarketingList\CopyContactsFromMarketingList.cs" />
+    <Compile Include="Commands\MarketingList\DeleteMarketingList.cs" />
+    <Compile Include="Commands\MarketingList\RemoveAllContactsFromMarketingList.cs" />
+    <Compile Include="Commands\MarketingList\AddContactToMarketingList.cs" />
+    <Compile Include="Commands\MarketingList\RetreiveAllMarketingLists.cs" />
+    <Compile Include="Commands\MarketingList\RemoveContactFromMarketingList.cs" />
+    <Compile Include="Commands\MarketingList\RetreiveMarketingList.cs" />
+    <Compile Include="Commands\MarketingResult\CreateOrUpdateMarketingResult.cs" />
+    <Compile Include="Commands\MarketingResult\DeleteMarketingResult.cs" />
+    <Compile Include="Commands\MarketingResult\RetrieveMarketingResultTypes.cs" />
+    <Compile Include="Commands\MarketingResult\RetrieveMarketingResults.cs" />
+    <Compile Include="Commands\MarketingResult\RetrieveMarketingResult.cs" />
+    <Compile Include="Commands\BaseCmdlet.cs" />
+    <Compile Include="Commands\TypedCmdlet.cs" />
+    <Compile Include="Commands\RequestProcessor.cs" />
+    <Compile Include="Commands\Validators\ModelValidator.cs" />
+    <Compile Include="DynamicsMarketingSnapIn.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Client\Client.cs" />
+    <Compile Include="Client\QueueClientProvider.cs" />
+    <Compile Include="Commands\ConnectToApi.cs" />
+    <Compile Include="Commands\GetMDMResponseMessage.cs" />
+    <Compile Include="Commands\SendMDMRequestMessage.cs" />
+    <Compile Include="Exceptions\ClientNotInitialized.cs" />
+    <Compile Include="Exceptions\SDKError.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="MDMPowerShellStrongName.snk" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>ECHO Copying to: $(SolutionDir)Installer\Files\
+copy /Y "$(TargetDir)*.dll" "$(SolutionDir)Installer\Files\"
+
+ECHO Copying to:  C:\Program Files\Microsoft Dynamics Marketing\PowerShell\
+copy /Y "$(TargetDir)*.dll" "C:\Program Files\Microsoft Dynamics Marketing\PowerShell\"
+
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\installutil.exe "C:\Program Files\Microsoft Dynamics Marketing\PowerShell\Microsoft.Dynamics.Marketing.PowerShell.API.dll"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+</Project>

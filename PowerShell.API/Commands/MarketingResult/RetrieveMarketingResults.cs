@@ -1,0 +1,165 @@
+﻿//--------------------------------------------------------------------------
+//  <copyright file="RetrieveMarketingResults.cs" company="Microsoft">
+//      Copyright (c) 2015 Microsoft Corporation.
+//
+//      Permission is hereby granted, free of charge, to any person obtaining a copy
+//      of this software and associated documentation files (the "Software"), to deal
+//      in the Software without restriction, including without limitation the rights
+//      to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+//      copies of the Software, and to permit persons to whom the Software is
+//      furnished to do so, subject to the following conditions:
+//
+//      The above copyright notice and this permission notice shall be included in
+//
+//      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//      IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+//      FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+//      AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+//      LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+//      OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+//      THE SOFTWARE.
+//  </copyright>
+//--------------------------------------------------------------------------
+
+namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.MarketingResult
+{
+    using System;
+    using System.Management.Automation;
+    using SDK.Messages.MarketingResult;
+    using SDK.Model;
+
+    /// <summary>
+    /// Command to setup the Azure namespace and authentication used by all other commands.
+    /// </summary>
+    [Cmdlet(VerbsCommon.Get, "MDMMarketingResults")]
+    public class RetrieveMarketingResults : TypedCmdlet<RetrieveMarketingResultsRequest, RetrieveMarketingResultsResponse>
+    {   
+        /// <summary>
+        /// Gets or sets the belongs to company id.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public Company BelongsToCompany { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Campaign for which results shall be retrieved.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public Campaign Campaign { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Channel for which results shall be retrieved.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public Channel Channel { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Contact for which results shall be retrieved.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public Contact Contact { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the date for which results shall be retrieved.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public DateTime? Date { get; set; }
+
+        /// <summary>
+        /// Gets or sets the EmailMessage for which results shall be retrieved.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public EmailMessage EmailMessage { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Event for which results shall be retrieved.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public Event Event { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the first update date to start retrieving from.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public DateTime? FromUpdateDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Job for which results shall be retrieved.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public SDK.Model.Job Job { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Result type for which results shall be retrieved.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public MarketingResultType MarketingResultType { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the Maximum number of records to get.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public int MaxNumberOfRecordsToGet { get; set; }
+
+        /// <summary>
+        /// Gets or sets the origin of change for which results shall be retrieved.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public string OriginOfChange { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Program for which results shall be retrieved.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public Program Program { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RetrieveMarketingResults"/> class. 
+        /// Constructor
+        /// </summary>
+        public RetrieveMarketingResults()
+        {
+            this.MaxNumberOfRecordsToGet = int.MaxValue;
+        }
+
+        /// <summary>
+        /// ProcessRecord method.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            var request = this.NewRequest();
+            request.BelongsToCompany = this.BelongsToCompany;
+            request.Campaign = this.Campaign;
+            request.Channel = this.Channel;
+            request.Contact = this.Contact;
+            request.Date = this.Date;
+            request.EmailMessage = this.EmailMessage;
+            request.Event = this.Event;
+            request.FromUpdateDate = this.FromUpdateDate;
+            request.Job = this.Job;
+            request.MaxNumberOfRecordsToGet = this.MaxNumberOfRecordsToGet;
+            request.MarketingResultType = this.MarketingResultType;
+            request.OriginOfChange = this.OriginOfChange;
+            request.Program = this.Program;
+
+            var response = this.ProcessRequest(request);
+            if (response == null)
+            {
+                return;
+            }
+
+            if (!response.Succeeded)
+            {
+                this.WriteVerbose("Command has failed:" + response.Message);
+            }
+
+            this.WriteObject(response.MarketingResults);
+        }
+
+        /// <summary>
+        /// EndProcessing method.
+        /// </summary>
+        protected override void EndProcessing()
+        {
+        }
+    }
+}
