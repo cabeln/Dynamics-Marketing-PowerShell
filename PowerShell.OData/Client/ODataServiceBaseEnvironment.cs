@@ -32,12 +32,15 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
     public abstract class ODataServiceBaseEnvironment
     {
         // MDM Online OAuth URL.
-        private const string OAuthUrl = "https://login.windows.net/common/";
+        private const string _OAuthUrl = "https://login.windows.net/common/";
 
         /// <summary>
         /// MDM authentication resource name.
         /// </summary>
-        private const string OAuthTokenResourceName = "https://marketing-infra.dynamics.com/";
+        private const string _OAuthTokenResourceName = "https://marketing-infra.dynamics.com/";
+
+        //private const string _OAuthTokenResourceName = "https://AUTHREDIR-US1.MARKETING-INFRA.DYNAMICS.COM/default.aspx";
+
 
         /// <summary>
         /// The before sign in event.
@@ -59,6 +62,12 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
         private string mdmServiceUrl;
 
         private string redirectUrl;
+
+        public ODataServiceBaseEnvironment()
+        {
+            this.OAuthUrl = _OAuthUrl;
+            this.OAuthTokenResourceName = _OAuthTokenResourceName;
+        }
 
         /// <summary>
         /// Gets or sets the App Id of the Azure app that is permitted to access the MDM OData service of an org
@@ -142,6 +151,16 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
         public string AuthenticationToken { get; protected set; }
 
         /// <summary>
+        /// Resource that is protected
+        /// </summary>
+        public string OAuthUrl { get; set; }
+
+        /// <summary>
+        /// Resource that is protected
+        /// </summary>
+        public string OAuthTokenResourceName { get; set; }
+
+        /// <summary>
         /// Gets or sets the  current refresh token, while user is signed in
         /// </summary>
         public string RefreshToken { get; protected set; }
@@ -179,9 +198,17 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
             }
 
             // Obtain an authentication token to access the web service. 
-            this.authenticationContext = new AuthenticationContext(OAuthUrl, false);
+            //this.authenticationContext = new AuthenticationContext(OAuthUrl, false);
+            //var result = this.authenticationContext.AcquireToken(
+            //    OAuthTokenResourceName,
+            //    this.AzureClientAppId,
+            //    this.RedirectUrl,
+            //    userId,
+            //    string.Empty);
+
+            this.authenticationContext = new AuthenticationContext(this.OAuthUrl); //, false);
             var result = this.authenticationContext.AcquireToken(
-                OAuthTokenResourceName,
+                this.OAuthTokenResourceName,
                 this.AzureClientAppId,
                 this.RedirectUrl,
                 userId,

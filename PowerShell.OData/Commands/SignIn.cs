@@ -25,6 +25,7 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Commands
 {
     using System;
     using System.Management.Automation;
+    using System.Runtime.CompilerServices;
 
     using Client;
 
@@ -62,6 +63,18 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Commands
         public string UserId { get; set; }
 
         /// <summary>
+        /// Gets or sets the User Id for prefilling the form
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public string OAuthUrl { get; set; }
+
+        /// <summary>
+        /// Resource that is protected
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public string OAuthTokenResourceName { get; set; }
+
+        /// <summary>
         /// ProcessRecord method.
         /// </summary>
         protected override void ProcessRecord()
@@ -69,6 +82,16 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Commands
             try
             {
                 var environment = ODataServiceEnvironment<DynamicDataServiceContext>.GetEnvironment();
+                if (!string.IsNullOrEmpty(this.OAuthUrl))
+                {
+                    environment.OAuthUrl = this.OAuthUrl;
+                }
+
+                if (!string.IsNullOrEmpty(this.OAuthTokenResourceName))
+                {
+                    environment.OAuthTokenResourceName = this.OAuthTokenResourceName;
+                }
+                
                 environment.ServiceUrl = this.SeviceUrl;
                 environment.RedirectUrl = this.RedirectUrl;
                 environment.AzureClientAppId = this.AzureClientAppId;
