@@ -29,7 +29,7 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.ExternalEntity
     /// <summary>
     /// Command to setup the Azure namespace and authentication used by all other commands.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "MDMExternalEntuityType")]
+    [Cmdlet(VerbsCommon.Remove, "MDMExternalEntityType")]
     public class DeleteExternalEntityType : TypedCmdlet<DeleteExternalEntityTypeRequest, DeleteExternalEntityTypeResponse>
     {
         /// <summary>
