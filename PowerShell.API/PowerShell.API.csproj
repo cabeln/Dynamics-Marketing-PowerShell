@@ -42,12 +42,13 @@
     <AssemblyOriginatorKeyFile>MDMPowerShellStrongName.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Dynamics.Marketing.SDK, Version=17.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Dynamics.Marketing.SDK.library.17.0.3709.2\lib\net40\Microsoft.Dynamics.Marketing.SDK.dll</HintPath>
+    <Reference Include="Microsoft.Dynamics.Marketing.SDK, Version=19.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Dynamics.Marketing.SDK.library.19.0\lib\net40\Microsoft.Dynamics.Marketing.SDK.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.ServiceBus, Version=2.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\WindowsAzure.ServiceBus.2.1.0.0\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
+    <Reference Include="Microsoft.ServiceBus, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\WindowsAzure.ServiceBus.2.4.1.0\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.2.0.0.0\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
@@ -71,6 +72,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\Contact\PartialContactsUpdate.cs" />
+    <Compile Include="Commands\Contact\PartialContactUpdate.cs" />
     <Compile Include="Commands\DisconnectApi.cs" />
     <Compile Include="Commands\Contact\CreateOrUpdateContacts.cs" />
     <Compile Include="Commands\Contact\RetrieveSalutations.cs" />
@@ -85,6 +88,8 @@
     <Compile Include="Commands\Company\DeleteCompany.cs" />
     <Compile Include="Commands\Contact\RetrieveContact.cs" />
     <Compile Include="Commands\CustomField\RetrieveCustomFields.cs" />
+    <Compile Include="Commands\EmailMessage\RetrieveCommercialEmailMessages.cs" />
+    <Compile Include="Commands\EmailMessage\SendCommercialEmailMessageById.cs" />
     <Compile Include="Commands\EmailMessage\SetEmailHardbouncesToProcessed.cs" />
     <Compile Include="Commands\EmailMessage\SetContactsPermissions.cs" />
     <Compile Include="Commands\EmailMessage\SetContactPermissions.cs" />

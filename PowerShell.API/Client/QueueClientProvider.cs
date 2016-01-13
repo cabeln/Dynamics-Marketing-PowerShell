@@ -94,8 +94,23 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Client
         /// </summary>
         private void TestQueues()
         {
-            this.RequestQueueClient.Peek();
-            this.ResponseQueueClient.Peek();
+            try
+            {
+                this.RequestQueueClient.Peek();
+            }
+            catch (TimeoutException ex)
+            {
+                throw new TimeoutException("Failed to test peek Request queue", ex);
+            }
+
+            try
+            {
+                this.ResponseQueueClient.Peek();
+            }
+            catch (TimeoutException ex)
+            {
+                throw new TimeoutException("Failed to test peek Response queue", ex);
+            }
         }
 
         /// <summary>

@@ -1,5 +1,5 @@
 ﻿//--------------------------------------------------------------------------
-//  <copyright file="RetrieveContacts.cs" company="Microsoft">
+//  <copyright file="PartialContactUpdate.cs" company="Microsoft">
 //      Copyright (c) 2015 Microsoft Corporation.
 //
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,61 +30,47 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.Contact
     /// <summary>
     /// Command to setup the Azure namespace and authentication used by all other commands.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "MDMContacts")]
-    public class RetrieveContacts : TypedCmdlet<RetrieveContactsRequest, RetrieveContactsResponse>
+    [Cmdlet(VerbsCommon.Enter, "MDMContactUpdate")]
+    public class PartialContactUpdate : TypedCmdlet<PartialContactUpdateRequest, PartialContactUpdateResponse>
     {
+
         /// <summary>
-        /// Gets or sets the belongs to company id.
+        /// Gets or sets the <see cref="Microsoft.Dynamics.Marketing.SDK.Model.Contact"/>.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [Alias("BelongsTo")]
-        public Guid? BelongsToCompanyId { get; set; }
+        [ValidateNotNullOrEmpty]
+        [Alias("ContactUpdate")]
+        public SDK.Model.PartialContactUpdateItem PartialContactUpdateItem { get; set; }
 
         /// <summary>
-        /// Gets or sets the first update date to start retrieving from.
+        /// Gets or sets the contact id.
         /// </summary>
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [Alias("From")]
-        public DateTime? FromUpdateDate { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Maximum number of records to get.
-        /// </summary>
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [Alias("Max")]
-        public int MaxNumberOfRecordsToGet { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Origin of change.
-        /// </summary>
-        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [Alias("Origin", "Change")]
-        public string OriginOfChange { get; set; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RetrieveContacts"/> class. 
-        /// Constructor
-        /// </summary>
-        public RetrieveContacts()
-        {
-            this.MaxNumberOfRecordsToGet = int.MaxValue;
-        }
+        [Alias("AllowUpdateCompany", "UpdateCompany")]
+        public bool EnableCreationOrUpdateOfCompany { get; set; }
 
         /// <summary>
         /// ProcessRecord method.
         /// </summary>
         protected override void ProcessRecord()
         {
+            if (this.PartialContactUpdateItem == null)
+            {
+                throw new PSArgumentNullException("PartialContactUpdateItem");
+            }
+
+            if (this.PartialContactUpdateItem.Id == Guid.Empty)
+            {
+                throw new PSArgumentNullException("PartialContactUpdateItem.Id (contact Id missing)");
+            }
+            
             var request = this.NewRequest();
-            request.BelongsToCompanyId = this.BelongsToCompanyId;
-            request.FromUpdateDate = this.FromUpdateDate;
-            request.MaxNumberOfRecordsToGet = this.MaxNumberOfRecordsToGet;
-            request.OriginOfChange = this.OriginOfChange;
+            request.PartialContactUpdateItem = this.PartialContactUpdateItem;
+            request.EnableCreationOrUpdateOfCompany = this.EnableCreationOrUpdateOfCompany;
 
             var response = this.ProcessRequest(request);
             if (response == null)
             {
-                this.WriteVerbose("No response");
                 return;
             }
 
@@ -93,7 +79,7 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.Contact
                 this.WriteVerbose("Command has failed:" + response.Message);
             }
 
-            this.WriteObject(response.Contacts);
+            this.WriteObject(response.Succeeded);
         }
     }
 }

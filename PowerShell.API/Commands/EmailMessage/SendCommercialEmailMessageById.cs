@@ -1,5 +1,5 @@
 ﻿//--------------------------------------------------------------------------
-//  <copyright file="RetrieveContacts.cs" company="Microsoft">
+//  <copyright file="SendCommercialEmailMessageById.cs" company="Microsoft">
 //      Copyright (c) 2015 Microsoft Corporation.
 //
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,53 +21,51 @@
 //  </copyright>
 //--------------------------------------------------------------------------
 
-namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.Contact
+namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.EmailMessage
 {
     using System;
     using System.Management.Automation;
-    using SDK.Messages.Contact;
+    using SDK.Messages.EmailMessage;
 
     /// <summary>
     /// Command to setup the Azure namespace and authentication used by all other commands.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "MDMContacts")]
-    public class RetrieveContacts : TypedCmdlet<RetrieveContactsRequest, RetrieveContactsResponse>
+    [Cmdlet(VerbsCommunications.Send, "MDMCommercialEmailMessage")]
+    public class SendCommercialEmailMessageById : Cmdlet
     {
         /// <summary>
-        /// Gets or sets the belongs to company id.
+        /// Gets or sets the ID of the email to send out
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [Alias("BelongsTo")]
-        public Guid? BelongsToCompanyId { get; set; }
+        [ValidateNotNullOrEmpty]
+        public Guid EmailMessageId { get; set; }
 
         /// <summary>
-        /// Gets or sets the first update date to start retrieving from.
+        /// Gets or sets the importance of the email when send out. Optional, default = Normal
         /// </summary>
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [Alias("From")]
-        public DateTime? FromUpdateDate { get; set; }
+        public SDK.Model.EmailMessageImportance Importance { get; set; }
 
         /// <summary>
-        /// Gets or sets the Maximum number of records to get.
+        /// Gets or sets data to be send with the email. Optional.
         /// </summary>
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [Alias("Max")]
-        public int MaxNumberOfRecordsToGet { get; set; }
+        public string MessageData { get; set; }
 
         /// <summary>
-        /// Gets or sets the Origin of change.
+        /// Gets or sets the sender contact ID. Mandatory.
         /// </summary>
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        [Alias("Origin", "Change")]
-        public string OriginOfChange { get; set; }
+        [ValidateNotNullOrEmpty]
+        public Guid SenderId { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RetrieveContacts"/> class. 
+        /// Initializes a new instance of the <see cref="SendEmailMessage"/> class. 
         /// Constructor
         /// </summary>
-        public RetrieveContacts()
+        public SendCommercialEmailMessageById()
         {
-            this.MaxNumberOfRecordsToGet = int.MaxValue;
+            this.Importance = SDK.Model.EmailMessageImportance.Normal;
         }
 
         /// <summary>
@@ -75,25 +73,30 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.Contact
         /// </summary>
         protected override void ProcessRecord()
         {
-            var request = this.NewRequest();
-            request.BelongsToCompanyId = this.BelongsToCompanyId;
-            request.FromUpdateDate = this.FromUpdateDate;
-            request.MaxNumberOfRecordsToGet = this.MaxNumberOfRecordsToGet;
-            request.OriginOfChange = this.OriginOfChange;
-
-            var response = this.ProcessRequest(request);
-            if (response == null)
+            if ((this.EmailMessageId == null) || (this.EmailMessageId == Guid.Empty))
             {
-                this.WriteVerbose("No response");
-                return;
+                throw new PSArgumentNullException("EmailMessageId");
             }
 
-            if (!response.Succeeded)
+            if ((this.SenderId == null) || (this.SenderId == Guid.Empty))
             {
-                this.WriteVerbose("Command has failed:" + response.Message);
+                throw new PSArgumentNullException("SenderId");
             }
 
-            this.WriteObject(response.Contacts);
+            var requestProcessor = new RequestProcessor<SendCommercialEmailMessageByIdRequest, SendCommercialEmailMessageByIdResponse>(this);
+            var request = requestProcessor.NewRequest();
+            request.EmailMessageId = this.EmailMessageId;
+            request.SenderId = this.SenderId;
+            request.MessageData = this.MessageData;
+            request.Importance = this.Importance;
+            this.WriteObject(requestProcessor.ProcessRequest(request));
+        }
+
+        /// <summary>
+        /// EndProcessing method.
+        /// </summary>
+        protected override void EndProcessing()
+        {
         }
     }
 }

@@ -30,7 +30,7 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.EmailMessage
     /// <summary>
     /// Command to setup the Azure namespace and authentication used by all other commands.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Send, "MDMEmailMessages")]
+    [Cmdlet(VerbsCommunications.Send, "MDMEmailMessage")]
     public class SendEmailMessage : Cmdlet
     {
         /// <summary>
