@@ -97,11 +97,12 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.Validators
             }
 
             // contact type
-            if (!company.IsClient && !company.IsMarketing && !company.IsVendor)
-            {
-                throw new PSArgumentNullException(
-                    "One contact.IsClient, contact.IsMarketing, contact.IsVendor");
-            }
+            // Disable this validation: The Site Company does not have any flag set
+            //if (!company.IsClient && !company.IsMarketing && !company.IsVendor)
+            //{
+            //    throw new PSArgumentNullException(
+            //        "One contact.IsClient, contact.IsMarketing, contact.IsVendor");
+            //}
 
             // Name is mandatory
             if (string.IsNullOrEmpty(company.Name))

@@ -101,8 +101,9 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands
         public TResp ProcessRequest(TReq request)
         {
             var client = Client.Instance;
-            var messageId = client.Send(request.ToBrokeredMessage(Client.SessionId));
-            this.cmdlet.WriteVerbose(string.Format(CultureInfo.CurrentUICulture, "{0}, MessageId:{1}", this.GetCommandName(), messageId));
+            var brokeredMsg = request.ToBrokeredMessage(Client.SessionId);
+            var messageId = client.Send(brokeredMsg);
+            this.cmdlet.WriteVerbose(string.Format(CultureInfo.CurrentUICulture, "{0}, MessageId:{1}, Size:{2}", this.GetCommandName(), messageId, brokeredMsg.Size));
 
             bool timedOut;
             var response = client.Receive(messageId, this.MaxResponseWaitTime, out timedOut);
@@ -131,7 +132,9 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands
             if (errorResponse != null)
             {
                 var errorMessage = string.Format(CultureInfo.CurrentUICulture, "{0}, {1}", sdkResponse.Message, errorResponse.MessageDetails);
+                this.cmdlet.WriteVerbose(string.Format(CultureInfo.CurrentUICulture, "Error respose received: {0}", errorMessage));
                 this.cmdlet.WriteError(new ErrorRecord(new SdkError(errorMessage), string.Empty, ErrorCategory.NotSpecified, null));
+                return null;
             }
 
             var typedResponse = sdkResponse as TResp;
@@ -146,4 +149,4 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands
             return null;
         }
     }
-}
+} 

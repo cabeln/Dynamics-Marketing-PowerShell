@@ -25,7 +25,6 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
 {
     using System;
     using System.Collections.Generic;
-    using System.Data.Services.Client;
     using System.Globalization;
     using System.Linq;
     using System.Management.Automation;
@@ -35,7 +34,7 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
     using Microsoft.ServiceBus;
 
     using Newtonsoft.Json;
-
+    using Microsoft.OData.Client;
     /// <summary>
     /// Http request builder used to request data from the MDM OData endpoint
     /// </summary>
@@ -145,7 +144,7 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
         /// <remarks>Builds an OData HTTP request using passed parameters and sends the request to the server.</remarks>
         public TD RetrieveODataContainer()
         {
-            if (string.IsNullOrEmpty(this.environment.AuthenticationToken))
+            if (!this.environment.RefreshSignIn())
             {
                 this.environment.SignIn();
             }
@@ -609,6 +608,16 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
         /// <returns>OData response</returns>
         public string RequestOData(string localQuery)
         {
+            if (!this.environment.IsSignedIn)
+            {
+                throw new InvalidPowerShellStateException("Not signed in to OData endpoint.");
+            }
+
+            if (!this.environment.RefreshSignIn())
+            {
+                throw new Exception("Refresh sign in to OData endpoint failed.");
+            }
+
             if (string.IsNullOrEmpty(localQuery))
             {
                 localQuery = this.Query;
@@ -620,14 +629,16 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
                 BaseAddress = uri,
             };
 
-            client.DefaultRequestHeaders.Add("Accept", "application/json;odata=minimalmetadata;q=1.0");
+            client.DefaultRequestHeaders.Add("Accept", "application/json;odata.metadata=minimal;q=1.0,application/json;odata=minimalmetadata;q=0.9");
             client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate");
             client.DefaultRequestHeaders.Add("User-Agent", "Microsoft.Data.Mashup (http://go.microsoft.com/fwlink/?LinkID=304225)");
 
             var msg = new HttpRequestMessage { Method = HttpMethod.Get, RequestUri = uri };
+            msg.Headers.Add("MaxDataSericeVersion", "3.0");
+            msg.Headers.Add("OData-MaxVersion", "4.0");
             var headerVal = new AuthenticationHeaderValue("Bearer", this.environment.AuthenticationToken);
             msg.Headers.Add("Authorization", headerVal.ToString());
-            msg.Headers.Add("MaxDataServiceVersion", "3.0");
+
             var sendTask = client.SendAsync(msg, HttpCompletionOption.ResponseContentRead);
             sendTask.Wait(5000);
             var response = sendTask.Result;

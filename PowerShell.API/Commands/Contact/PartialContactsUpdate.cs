@@ -41,11 +41,11 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.Contact
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        [Alias("ContactUpdate")]
+        [Alias("ContactsUpdate")]
         public IEnumerable<SDK.Model.PartialContactUpdateItem> PartialContactUpdateItems { get; set; }
 
         /// <summary>
-        /// Gets or sets the contact id.
+        /// Gets or sets a value indating whether the parent company may be created if not found.
         /// </summary>
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("AllowUpdateCompany", "UpdateCompany")]

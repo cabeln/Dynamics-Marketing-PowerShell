@@ -24,8 +24,7 @@
 namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
 {
     using System;
-    using Microsoft.WindowsAzure.ActiveDirectory.Authentication;
-
+    using IdentityModel.Clients.ActiveDirectory;
     /// <summary>
     /// The o data service base environment.
     /// </summary>
@@ -41,6 +40,8 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
 
         //private const string _OAuthTokenResourceName = "https://AUTHREDIR-US1.MARKETING-INFRA.DYNAMICS.COM/default.aspx";
 
+        private const string _PowerBiAppId = "a672d62c-fc7b-4e81-a576-e60dc46e951d";
+        private const string _PowerBiRedirectUrl = "https://de-users-preview.sqlazurelabs.com/account/reply/";
 
         /// <summary>
         /// The before sign in event.
@@ -58,15 +59,19 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
         public event EventHandler SignedOut;
 
         private AuthenticationContext authenticationContext;
+        private AuthenticationResult currentAuthenticationResult;
+
         private string odataClientAppId;
         private string mdmServiceUrl;
 
-        private string redirectUrl;
+        private Uri redirectUrl;
 
         public ODataServiceBaseEnvironment()
         {
             this.OAuthUrl = _OAuthUrl;
             this.OAuthTokenResourceName = _OAuthTokenResourceName;
+            this.AzureClientAppId = _PowerBiAppId;
+            this.RedirectUrl = new Uri(_PowerBiRedirectUrl);
         }
 
         /// <summary>
@@ -95,13 +100,14 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
             get { return this.mdmServiceUrl; }
             set
             {
-                if (string.Equals(this.ServiceUrl, value))
+                var newUrl = this.CleanseServiceUrl(value);
+                if (string.Equals(this.ServiceUrl, newUrl))
                 {
                     return;
                 }
 
                 this.SignOut();
-                this.mdmServiceUrl = value;
+                this.mdmServiceUrl = newUrl;
             }
         }
 
@@ -130,7 +136,7 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
         /// <summary>
         /// Gets or sets the  redirect URI that has been specified in the Azure app 
         /// </summary>
-        public string RedirectUrl
+        public Uri RedirectUrl
         {
             get { return this.redirectUrl; }
             set
@@ -177,6 +183,7 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
 
             this.authenticationContext = null;
             this.AuthenticationToken = null;
+            this.currentAuthenticationResult = null;
 
             if (this.SignedOut != null)
             {
@@ -189,8 +196,9 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
         /// This is where authentication with Active Directory is performed.        
         /// </summary>
         /// <param name="userId">The userId for prefilling login form.</param>
+        /// <param name="secureSecret">Secure string with the password wor direct sign in.</param>
         /// <returns>The access token.</returns>
-        public string SignIn(string userId = "")
+        public AuthenticationResult SignIn(string userId = "", string secureSecret = "")
         {
             if (this.BeforeSignIn != null)
             {
@@ -198,39 +206,61 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
             }
 
             // Obtain an authentication token to access the web service. 
-            //this.authenticationContext = new AuthenticationContext(OAuthUrl, false);
-            //var result = this.authenticationContext.AcquireToken(
-            //    OAuthTokenResourceName,
-            //    this.AzureClientAppId,
-            //    this.RedirectUrl,
-            //    userId,
-            //    string.Empty);
-
-            this.authenticationContext = new AuthenticationContext(this.OAuthUrl); //, false);
-            var result = this.authenticationContext.AcquireToken(
-                this.OAuthTokenResourceName,
-                this.AzureClientAppId,
-                this.RedirectUrl,
-                userId,
-                string.Empty);
-
-            // Verify that an access token was successfully acquired.
-            if (String.IsNullOrEmpty(result.AccessToken))
+            try
             {
-                this.SignOut();
-            }
-            else
-            {
-                this.AuthenticationToken = result.AccessToken;
-                this.RefreshToken = result.RefreshToken;
-
-                if (this.SignedIn != null)
+                UserIdentifier user = UserIdentifier.AnyUser;
+                if (!string.IsNullOrEmpty(userId))
                 {
-                    this.SignedIn(this, null);
+                    new UserIdentifier(userId, UserIdentifierType.OptionalDisplayableId);
                 }
+
+                this.authenticationContext = new AuthenticationContext(this.OAuthUrl, true);
+                this.currentAuthenticationResult = this.authenticationContext.AcquireToken(
+                    this.OAuthTokenResourceName,
+                    this.AzureClientAppId,
+                    this.RedirectUrl,
+                    PromptBehavior.RefreshSession,
+                    user);
+
+
+                // Verify that an access token was successfully acquired.
+                if (String.IsNullOrEmpty(currentAuthenticationResult.AccessToken))
+                {
+                    this.SignOut();
+                }
+                else
+                {
+                    this.AuthenticationToken = currentAuthenticationResult.AccessToken;
+                    this.RefreshToken = currentAuthenticationResult.RefreshToken;
+
+                    if (this.SignedIn != null)
+                    {
+                        this.SignedIn(this, null);
+                    }
+                }
+
+                return currentAuthenticationResult;
+            }
+            finally
+            {
+            }
+        }
+
+        public bool RefreshSignIn()
+        {
+            if (!this.IsSignedIn)
+            {
+                return false;
             }
 
-            return result.AccessToken;
+            if (this.currentAuthenticationResult.ExpiresOn.AddMinutes(10) <= DateTimeOffset.Now)
+            {
+                this.currentAuthenticationResult = this.authenticationContext.AcquireTokenByRefreshToken(this.currentAuthenticationResult.RefreshToken, this.odataClientAppId);
+                this.AuthenticationToken = currentAuthenticationResult.AccessToken;
+                this.RefreshToken = currentAuthenticationResult.RefreshToken;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -238,7 +268,34 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
         /// </summary>
         public bool IsSignedIn
         {
-            get { return !string.IsNullOrEmpty(this.AuthenticationToken); }
+            get
+            {
+                return !string.IsNullOrEmpty(this.AuthenticationToken);
+            }
+        }
+
+        /// <summary>
+        /// Make sure we have not the Analytics in the service Url
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        private string CleanseServiceUrl(string url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                return url;
+            }
+
+            var slash = new Char[]{ '/' };
+            string cleansed = url.TrimEnd(slash);
+            var tag = "analytics";
+            if (cleansed.ToLowerInvariant().EndsWith(tag))
+            {
+                cleansed = cleansed.Remove(cleansed.Length - tag.Length);
+                cleansed = url.TrimEnd(slash);
+            }
+
+            return cleansed;
         }
     }
 }

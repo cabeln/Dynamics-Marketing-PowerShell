@@ -23,7 +23,7 @@
 
 namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
 {
-    using System.Data.Services.Client;
+    using Microsoft.OData.Client;
     using System.Diagnostics.CodeAnalysis;
 
     /// <summary>

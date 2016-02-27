@@ -23,7 +23,7 @@
 
 namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
 {
-    using System.Data.Services.Client;
+    using Microsoft.OData.Client;
 
     /// <summary>
     /// The dynamic data service context.
@@ -37,7 +37,7 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Client
         /// The service root.
         /// </param>
         public DynamicDataServiceContext(System.Uri serviceRoot) :
-            base(serviceRoot, System.Data.Services.Common.DataServiceProtocolVersion.V3)
+            base(serviceRoot, ODataProtocolVersion.V4)
         {
             this.OnContextCreated();
         }

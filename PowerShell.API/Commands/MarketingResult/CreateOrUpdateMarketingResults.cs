@@ -1,5 +1,4 @@
 ﻿//--------------------------------------------------------------------------
-//  <copyright file="SendMDMRequestMessage.cs" company="Microsoft">
 //      Copyright (c) 2015 Microsoft Corporation.
 //
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,24 +20,25 @@
 //  </copyright>
 //--------------------------------------------------------------------------
 
-namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands
+namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.MarketingResult
 {
+    using System;
+    using System.Collections.Generic;
     using System.Management.Automation;
-    using Client;
+    using SDK.Messages.MarketingResult;
 
     /// <summary>
-    /// Command to send requests to MDM.
+    /// Command to setup the Azure namespace and authentication used by all other commands.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Send, "MDMApiRequest")]
-    public class SendMDMRequestMessage : BaseCmdlet
+    [Cmdlet(VerbsCommon.Add, "MDMMarketingResults")]
+    public class CreateOrUpdateMarketingResults : TypedCmdlet<CreateOrUpdateMarketingResultsRequest, CreateOrUpdateMarketingResultsResponse>
     {
         /// <summary>
-        /// Gets or sets the SDK request.
-        /// This value is passed by as a parameter in the PowerShell script.
+        /// Gets or sets the <see cref="Microsoft.Dynamics.Marketing.SDK.Model.MarketingResult"/>.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        public SDK.Common.SdkRequest Request
+        public IEnumerable<SDK.Model.MarketingResult> MarketingResults
         {
             get;
             set;
@@ -49,11 +49,26 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            var client = Client.Instance;
-            var brokeredMsg = this.Request.ToBrokeredMessage(Client.SessionId);
-            this.WriteVerbose(string.Format("Message Size:{0}", brokeredMsg.Size));
-            var messageId = client.Send(brokeredMsg);
-            this.WriteObject(messageId);
+            if (this.MarketingResults == null)
+            {
+                throw new PSArgumentNullException("MarketingResult");
+            }
+
+            var request = this.NewRequest();
+            request.MarketingResultRequests = this.MarketingResults;
+
+            var response = this.ProcessRequest(request);
+            if (response == null)
+            {
+                return;
+            }
+
+            //if (!response.Succeeded)
+            //{
+            //    this.WriteVerbose("Command has failed:" + response.Message);
+            //}
+
+            this.WriteObject(response.MarketingResultResponses);
         }
     }
 }

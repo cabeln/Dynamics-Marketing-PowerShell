@@ -43,7 +43,7 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.Contact
         public SDK.Model.PartialContactUpdateItem PartialContactUpdateItem { get; set; }
 
         /// <summary>
-        /// Gets or sets the contact id.
+        /// Gets or sets a value indating whether the parent company may be created if not found.
         /// </summary>
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("AllowUpdateCompany", "UpdateCompany")]
@@ -58,7 +58,7 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.Contact
             {
                 throw new PSArgumentNullException("PartialContactUpdateItem");
             }
-
+ 
             if (this.PartialContactUpdateItem.Id == Guid.Empty)
             {
                 throw new PSArgumentNullException("PartialContactUpdateItem.Id (contact Id missing)");

@@ -40,7 +40,7 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Commands
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
-        public string SeviceUrl { get; set; }
+        public string ServiceUrl { get; set; }
 
         /// <summary>
         /// Gets or sets the redirect URL of the Azure app
@@ -61,6 +61,12 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Commands
         /// </summary>
         [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string UserId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the secure secret for direct sign in
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        public string SecureSecret { get; set; }
 
         /// <summary>
         /// Gets or sets the User Id for prefilling the form
@@ -91,12 +97,23 @@ namespace Microsoft.Dynamics.Marketing.Powershell.OData.Commands
                 {
                     environment.OAuthTokenResourceName = this.OAuthTokenResourceName;
                 }
-                
-                environment.ServiceUrl = this.SeviceUrl;
-                environment.RedirectUrl = this.RedirectUrl;
-                environment.AzureClientAppId = this.AzureClientAppId;
-                var token = environment.SignIn(this.UserId);
-                this.WriteVerbose("Authorization token: " + token);
+
+                environment.ServiceUrl = this.ServiceUrl;
+
+                if (!string.IsNullOrEmpty(this.RedirectUrl))
+                {
+                    environment.RedirectUrl = new Uri(this.RedirectUrl);
+                }
+
+                if (!string.IsNullOrEmpty(this.AzureClientAppId))
+                {
+                    environment.AzureClientAppId = this.AzureClientAppId;
+                }
+
+                var authResult = environment.SignIn(this.UserId, this.SecureSecret);
+                this.WriteVerbose("Authorization token: " + authResult.AccessToken);
+                this.WriteVerbose("Expires: " + authResult.ExpiresOn.ToLocalTime().ToString());
+                this.WriteVerbose("Refresh Token: " + authResult.RefreshToken);
                 this.WriteObject(environment.IsSignedIn);
             }
             catch (Exception ex)

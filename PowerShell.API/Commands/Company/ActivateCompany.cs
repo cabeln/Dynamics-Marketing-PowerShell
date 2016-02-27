@@ -1,5 +1,5 @@
 ﻿//--------------------------------------------------------------------------
-//  <copyright file="SendMDMRequestMessage.cs" company="Microsoft">
+//  <copyright file="ActivateCompany.cs" company="Microsoft">
 //      Copyright (c) 2015 Microsoft Corporation.
 //
 //      Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,24 +21,25 @@
 //  </copyright>
 //--------------------------------------------------------------------------
 
-namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands
+namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands.Contact
 {
+    using System;
     using System.Management.Automation;
-    using Client;
+    using SDK.Messages.Company;
 
     /// <summary>
-    /// Command to send requests to MDM.
+    /// Command to setup the Azure namespace and authentication used by all other commands.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Send, "MDMApiRequest")]
-    public class SendMDMRequestMessage : BaseCmdlet
+    [Cmdlet(VerbsLifecycle.Enable, "MDMCompany")]
+    public class EnableCompany : TypedCmdlet<ActivateCompanyRequest, ActivateCompanyResponse>
     {
         /// <summary>
-        /// Gets or sets the SDK request.
-        /// This value is passed by as a parameter in the PowerShell script.
+        /// Gets or sets the company id.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Alias("Id")]
         [ValidateNotNullOrEmpty]
-        public SDK.Common.SdkRequest Request
+        public Guid CompanyId
         {
             get;
             set;
@@ -49,11 +50,26 @@ namespace Microsoft.Dynamics.Marketing.Powershell.API.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            var client = Client.Instance;
-            var brokeredMsg = this.Request.ToBrokeredMessage(Client.SessionId);
-            this.WriteVerbose(string.Format("Message Size:{0}", brokeredMsg.Size));
-            var messageId = client.Send(brokeredMsg);
-            this.WriteObject(messageId);
+            if (this.CompanyId == null || this.CompanyId == Guid.Empty)
+            {
+                throw new PSArgumentNullException("CompanyId");
+            }
+
+            var request = this.NewRequest();
+            request.CompanyId = this.CompanyId;
+
+            var response = this.ProcessRequest(request);
+            if (response == null)
+            {
+                return;
+            }
+
+            if (!response.Succeeded)
+            {
+                this.WriteVerbose("Command has failed:" + response.Message);
+            }
+
+            this.WriteObject(response.Succeeded);
         }
     }
 }
